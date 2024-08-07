@@ -13,8 +13,8 @@ module.exports = {
       },
       fontFamily: {
         bevan: ['Bevan', 'sans-serif'],
+      },
     },
-  },
-  plugins: [],
-}
+    plugins: [],
+  }
 }

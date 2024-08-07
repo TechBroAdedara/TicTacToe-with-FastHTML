@@ -26,11 +26,12 @@ style = Style(
 ) # custom style to be applied globally.
 
 script = Script(src="/src/htmx.min.js")
+tailwind_script = Script(src="https://cdn.tailwindcss.com")
 css_with_tailwind = Link(rel="stylesheet", href="/src/output.css")
 
 app, rt = fast_app(
     routes=[Mount("/src", StaticFiles(directory="src"), name="src")],
-    hdrs=(css_with_tailwind, style, script),
+    hdrs=(css_with_tailwind, style, script, tailwind_script),
     pico=False,
     live=True,
 )
@@ -74,9 +75,10 @@ def check_win(player) -> bool:
     return f"Player {"X" if player == "O" else "O"}'s turn!" 
     #will keep returning this value [because its called after every button click], until a winner or none is found
 
-#This function handles what text gets sent to the button's face depending on whose turn it is
-#uses a weird algorithm
+
 def handle_click(index: int):
+    """This function handles what text gets sent to the button's face depending on whose turn it is
+    uses a weird algorithm"""
     global button_states, current_state_index
     next_index = current_state_index + 1
     button_states[next_index] = button_states[current_state_index][:] #make a copy of the current snapshot to add to the next snapshot
@@ -117,9 +119,10 @@ def render_button(index:int):
             But to be able to check the winner and stop the game, I have to use the next snapshot instead
             if you wanna see the previous implementation, it should be in one of the commits.
             """
-    board = Div(Div(winner, cls="justify-self-center"),
+    board = Div(
+                Div(winner, cls="justify-self-center"),
                 Div(*buttons, cls="grid grid-cols-3 grid-rows-3"),
-            cls="buttons-div font-bevan text-white font-semibold grid justify-center"
+                cls="buttons-div font-bevan text-white font-light grid justify-center"
             )
     return board
 
@@ -145,10 +148,9 @@ def render_board():
         )
         for i, _ in enumerate(button_states[current_state_index])
     ]
-    return Div(
-                Div("Start the game. Player X starts first", cls="justify-self-center"), 
+    return  Div(Div("Player X starts the game",cls="font-bevan text-white justify-self-center"),
                 Div(*buttons, cls="grid grid-cols-3 grid-rows-3"),
-                cls=" buttons-div font-bevan text-white font-semibold grid justify-center"
+                cls="buttons-div grid"
             )
 
 
@@ -161,12 +163,12 @@ def main():
             H1("Tic Tac Toe!", cls="font-bevan text-5xl text-white"),
             P(
                 "A FastHTML app by Adedara Adeloro",
-                cls="font-bevan text-custom-blue font-semibold",
+                cls="font-bevan text-custom-blue font-light",
             ),
             cls="m-14"
         ),
         Div(
-            Div(render_board(), cls="buttons-div"),  # render buttons.
+            render_board(),  # render buttons.
 
             Div(
                 # Button("Go to state 1", 
