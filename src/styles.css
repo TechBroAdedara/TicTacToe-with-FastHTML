@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Bevan:ital@0;1&display=swap');
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.tic-button{
+    @apply text-custom-blue rounded-xl scale-95 p-2 w-[85px] h-[85px] hover:bg-custom-blue bg-custom-gray hover:text-custom-gray m-0.5 font-bevan text-5xl  transition duration-300;
+}
+.tic-button-disabled{
+    @apply text-disabled-blue rounded-xl scale-95 p-2 w-[85px] h-[85px] bg-custom-gray m-0.5 font-bevan text-5xl border-2 border-disabled-blue transition duration-300;
+}
+.restart-button{
+    @apply text-custom-blue rounded-xl p-2 w-auto h-auto hover:bg-custom-blue bg-custom-gray hover:text-custom-gray m-10 font-bevan text-xl;
+}
