@@ -1,0 +1,2 @@
+This FastHTML app uses Tailwindcss, which is why I initialized this repo as both a node project and as a python virtual environment. 
+If you wanna clone this project, be sure to install all python requirements using the requirements.txt and also set up and initialize tailwind in order to see the correct styles. 
