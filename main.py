@@ -11,7 +11,7 @@ from fasthtml.common import (
     serve,
     Style,
 )
-
+from icecream import ic
 
 style = Style(
     """
@@ -33,7 +33,9 @@ app, rt = fast_app(
     pico=False,
     live=True,
 )
-button_states = ["."] * 9
+
+current_state_index = -1
+button_states = [[None for _ in range(9)] for _ in range(9)]
 win_states = [
     [0, 1, 2],
     [3, 4, 5],
@@ -44,68 +46,75 @@ win_states = [
     [0, 4, 8],
     [2, 4, 6],
 ]
-game_in_progress = True
 
 
-def check_win() -> bool:
-    global button_statess
+def check_win(player) -> bool:
+    global button_states, current_state_index
+    next_index = current_state_index + 1
     for cell_1, cell_2, cell_3 in win_states:
         if (
-            button_states[cell_1] != "."
-            and button_states[cell_1] == button_states[cell_2]
-            and button_states[cell_2] == button_states[cell_3]
+            button_states[current_state_index][cell_1] != None
+            and button_states[current_state_index][cell_1]
+            == button_states[current_state_index][cell_2]
+            and button_states[current_state_index][cell_2]
+            == button_states[current_state_index][cell_3]
         ):
-            return "Winner"
+            return f" {player} is the winner!"
+    if all(value is not None for value in button_states[current_state_index]):
+        return "No winner"
 
 
-@app.get("/declare_winner")
-def declare_winner():
-    print("Winner Called")
-    return "There's a winner"
+def handle_click(index: int):
+    global button_states, current_state_index
+    next_index = current_state_index + 1
+    button_states[next_index] = button_states[current_state_index][:]
+
+    if button_states[current_state_index][index] is None:
+        if "X" not in button_states[current_state_index] or button_states[
+            current_state_index
+        ].count("X") <= button_states[current_state_index].count("O"):
+            button_states[next_index][index] = "X"
+        else:
+            button_states[next_index][index] = "O"
+    ic(button_states)
+    current_state_index += 1
+    return button_states[next_index][index]
 
 
-@app.get("/on_click")
-def click_handler(index: int):
-    global button_states, game_in_progress
-    new_button_text = ""
-    if button_states[index] == ".":
-        button_states[index] = (
-            "X"
-            if "X" not in button_states
-            or button_states.count("X") == button_states.count("O")
-            else "O"
-        )
-        new_button_text = button_states[index]
-
-    new_button_text = button_states[index]
-    print(check_win())
-    return Button(
-        f"{new_button_text}",
+@app.get("/on_click")  # On click, call helper function to alternate between X and O
+def render_button(index: int):
+    global button_states, current_state_index
+    player = handle_click(index)
+    button = Button(
+        f"{player}",  # helper function: handle_click, which gives the button its value
         cls="tic-button-disabled",
         hx_get=f"/on_click?index={index}",
         disabled=True,
     )
+    print(check_win(player))  # function that checks if there's a winner
+    return button
 
 
+# Rerenders the board if the restart button is clicked.
+# Also responsible for initial rendering on board when webpage is reloaded
 @app.post("/restart")
-def render_buttons():
-    global button_states, game_in_progress
-    game_in_progress = True
-    button_states = ["."] * 9
-
+def restart_game():
+    global button_states, current_state_index
+    current_state_index = -1
+    button_states = [[None for _ in range(9)] for _ in range(9)]
     # button component
     buttons = [
         Button(
             ".", cls="tic-button", hx_get=f"/on_click?index={i}", hx_swap="outerHTML"
         )
-        for i, _ in enumerate(button_states)
+        for i, _ in enumerate(button_states[current_state_index])
     ]
     return Div(*buttons, cls="buttons-div grid grid-cols-3 grid-rows-3")
 
 
-@app.get("/test")
-def test():
-    return "<h1>Test</h1>"
+# @app.get("/test")
+# def test():
+#     return "<h1>Test</h1>"
 
 
 @app.get("/")
@@ -122,15 +131,20 @@ def homepage():
         ),
         Div(
             Div(
-                render_buttons(),
+                restart_game(),  # render buttons initially.
+                # Function name doesn't reflect operation, bear with me
             ),
-            Button(
-                "Restart!",
-                cls="restart-button",
-                hx_post="/restart",
-                hx_target=".buttons-div",
-                hx_swap="outerHTML",
-                disabled=False,
+            Div(
+                Button("Go to state 1", cls="restart-button"),
+                Button(
+                    "Restart!",
+                    cls="restart-button",
+                    hx_post="/restart",
+                    hx_target=".buttons-div",
+                    hx_swap="outerHTML",
+                    disabled=False,
+                ),
+                cls="flex flex-col items-center justify-center",
             ),
             cls="flex flex-col items-center justify-center",
         ),
