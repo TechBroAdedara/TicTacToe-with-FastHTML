@@ -592,9 +592,26 @@ video {
   justify-content: center;
 }
 
+.self-center{
+  align-self: center;
+}
+
+.justify-self-center{
+  justify-self: center;
+}
+
 .bg-custom-background{
   --tw-bg-opacity: 1;
   background-color: rgb(26 26 30 / var(--tw-bg-opacity));
+}
+
+.object-center{
+  -o-object-position: center;
+     object-position: center;
+}
+
+.text-center{
+  text-align: center;
 }
 
 .font-bevan{
