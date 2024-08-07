@@ -115,7 +115,7 @@ def render_button(index:int):
     """rerenders buttons based on the next snapshot.
             I initially made this to render only the button that gets clicked. 
             But to be able to check the winner and stop the game, I have to use the next snapshot instead
-            if you wanna see the previous implementation, it should be in one of those commits, I'm not sure.
+            if you wanna see the previous implementation, it should be in one of the commits.
             """
     board = Div(Div(winner, cls="justify-self-center"),
                 Div(*buttons, cls="grid grid-cols-3 grid-rows-3"),
@@ -126,9 +126,10 @@ def render_button(index:int):
 
 # Rerenders the board if the restart button is clicked.
 # Also responsible for initial rendering of board when webpage is reloaded
-@app.post("/restart")
+@app.get("/restart")
 def render_board():
     global button_states, current_state_index, winner_found_game_ended
+
     current_state_index = -1
     button_states = [[None for _ in range(9)] for _ in range(9)]
     winner_found_game_ended = False
@@ -168,16 +169,20 @@ def main():
             Div(render_board(), cls="buttons-div"),  # render buttons.
 
             Div(
-                Button("Go to state 1", cls="restart-button"),
+                # Button("Go to state 1", 
+                #        cls="text-disabled-blue rounded-xl p-2 w-auto h-auto border-disabled-blue bg-custom-gray font-bevan text-xl m-3", 
+                #        disabled=True,
+                #        hx_get="/restart?state=4",
+                #        hx_target=".buttons-div"),
                 Button(
                     "Restart!",
                     cls="restart-button",
-                    hx_post="/restart",
+                    hx_get="/restart",
                     hx_target=".buttons-div",
                     hx_swap="outerHTML",
                     disabled=False,
                 ),
-                cls="flex flex-col items-center justify-center",
+                cls="flex flex-col items-center justify-center m-10",
             ),
             cls="flex flex-col items-center justify-center",
         ),
