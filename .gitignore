@@ -6,3 +6,4 @@ src/
 *.sesskey
 *.js
 *.json
+src/output.css
