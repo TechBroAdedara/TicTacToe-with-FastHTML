@@ -25,13 +25,13 @@ style = Style(
             }"""
 ) # custom style to be applied globally.
 
-script = Script(src="/src/htmx.min.js")
-tailwind_script = Script(src="https://cdn.tailwindcss.com")
-css_with_tailwind = Link(rel="stylesheet", href="/src/output.css")
+tailwind_script = Script(src="https://cdn.tailwindcss.com") 
+local_css_with_tailwind = Link(rel="stylesheet", href="/src/output.css")# to be used as fallback if users are offline.
+script = Script(src="/src/htmx.min.js") # also to be used as fallback, because apparently htmx is a js file access over the internet. I did not know that.
 
 app, rt = fast_app(
     routes=[Mount("/src", StaticFiles(directory="src"), name="src")],
-    hdrs=(css_with_tailwind, style, script, tailwind_script),
+    hdrs=(local_css_with_tailwind, style, script, tailwind_script),
     pico=False,
     live=True,
 )
