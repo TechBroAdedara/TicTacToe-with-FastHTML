@@ -5,3 +5,4 @@ src/
 
 *.sesskey
 *.js
+*.json
