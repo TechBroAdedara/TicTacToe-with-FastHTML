@@ -1,3 +1,3 @@
-FastHTML app that uses Tailwindcss. 
+# FastHTML app that uses Tailwindcss. 
 I didn't include the js files for Tailwind in the remote repo because I have included the cdn to tailwind in the headers of the webapp. 
 So there'll be no need to manually install tailwind to be able to see the correct styles. 
